@@ -3,7 +3,9 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: your_database_name
+      database: reactive_db
+      username: admin
+      password: admin
 
   jpa:
     hibernate:

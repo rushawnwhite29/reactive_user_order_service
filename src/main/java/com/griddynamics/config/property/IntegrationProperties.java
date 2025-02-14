@@ -36,4 +36,5 @@ public class IntegrationProperties {
             super(url, basePath);
         }
     }
+
 }

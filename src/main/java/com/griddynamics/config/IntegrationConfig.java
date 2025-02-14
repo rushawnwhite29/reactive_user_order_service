@@ -27,4 +27,5 @@ public class IntegrationConfig {
                 .baseUrl(integrationProperties.getProductInfoService().getUrl())
                 .build();
     }
+
 }
