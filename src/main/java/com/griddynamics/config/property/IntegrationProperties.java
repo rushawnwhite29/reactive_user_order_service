@@ -22,16 +22,13 @@ public class IntegrationProperties {
         private String basePath;
     }
 
-    public static
-    class ProductInfoService extends IntegrationService {
-
+    public static class ProductInfoService extends IntegrationService {
         public ProductInfoService(String url, String basePath) {
             super(url, basePath);
         }
     }
 
     public static class OrderSearchService extends IntegrationService {
-
         public OrderSearchService(String url, String basePath) {
             super(url, basePath);
         }

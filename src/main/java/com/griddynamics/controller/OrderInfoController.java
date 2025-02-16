@@ -6,22 +6,25 @@ import reactor.core.publisher.Flux;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.griddynamics.controller.model.ApiModel;
 import com.griddynamics.service.OrderInfoService;
 
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/orders")
 public class OrderInfoController {
 
     private final OrderInfoService orderService;
 
-    @GetMapping("/orders/{phoneNumber}")
-    public Flux<ApiModel.OrderInfo> getOrdersByPhoneNumber(@PathVariable String phoneNumber) {
-        log.info("Received request to get orders by phone number: {}", phoneNumber);
-        return orderService.getOrdersByPhoneNumber(phoneNumber);
+    @GetMapping("/{userId}")
+    public Flux<ApiModel.OrderInfo> getOrdersByPhone(@PathVariable String userId) {
+        log.info("Received request to get orders by user id: [{}]", userId);
+        return orderService.getOrdersByUserId(userId);
     }
 
 }

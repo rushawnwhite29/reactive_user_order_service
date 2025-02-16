@@ -18,7 +18,19 @@ public class ProductService {
 
     public Mono<ProductInfoServiceModel.Product> getMostRelevantProductByScore(String productCode) {
         return productInfoServiceClient.getProductNamesInfoByProductCode(productCode)
-                .reduce((product1, product2) -> product1.getScore() > product2.getScore() ? product1 : product2);
+                .doOnComplete(() -> log.info("Fetched product names [{}]", productCode))
+                .doOnError(e -> log.error("Error fetching product names [{}]. {}", productCode, e.getMessage()))
+                .onErrorReturn(
+                        ProductInfoServiceModel.Product.builder()
+                                .productCode(productCode)
+                                .build()
+                )
+                .defaultIfEmpty(
+                        ProductInfoServiceModel.Product.builder()
+                                .productCode(productCode)
+                                .build()
+                )
+                .reduce((product1, product2) -> product1.getScore() >= product2.getScore() ? product1 : product2);
     }
 
 }

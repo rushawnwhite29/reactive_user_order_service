@@ -1,44 +1,37 @@
 package com.griddynamics.controller.filter;
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.stereotype.Component;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
+
+import java.util.UUID;
 
 @Component
-public class RequestIdFilter implements Filter {
+public class RequestIdFilter extends CommonsRequestLoggingFilter {
 
     private static final String REQUEST_ID_HEADER = "requestId";
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String requestId = httpRequest.getHeader(REQUEST_ID_HEADER);
-        if (requestId != null) {
-            ThreadContext.put(REQUEST_ID_HEADER, requestId);
-        }
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            ThreadContext.remove(REQUEST_ID_HEADER);
-        }
+    protected boolean shouldLog(HttpServletRequest request) {
+        return request.getRequestURI().startsWith("/orders");
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // No initialization needed
+    protected void beforeRequest(@NotNull HttpServletRequest request, @NotNull String message) {
+        final String requestID = StringUtils.substringAfterLast(UUID.randomUUID().toString(), "-");
+
+        request.setAttribute(REQUEST_ID_HEADER, requestID);
+        ThreadContext.put(REQUEST_ID_HEADER, requestID);
     }
 
     @Override
-    public void destroy() {
-        // No cleanup needed
+    protected void afterRequest(HttpServletRequest request, @NotNull String message) {
+        request.removeAttribute(REQUEST_ID_HEADER);
+        ThreadContext.remove(REQUEST_ID_HEADER);
     }
+
 }

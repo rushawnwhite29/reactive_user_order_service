@@ -1,10 +1,13 @@
 package com.griddynamics.repository;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
-import com.griddynamics.domain.UserInfo;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-@Repository
-public interface UserInfoRepository extends ReactiveCrudRepository<UserInfo, String> {
+import com.griddynamics.domain.model.User;
+
+public interface UserInfoRepository extends ReactiveMongoRepository<User, String> {
+
+    Mono<User> findUserByPhone(String phone);
+
 }

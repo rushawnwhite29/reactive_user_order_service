@@ -3,14 +3,13 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: reactive_db
-      username: admin
-      password: admin
+      database: admin
+      username: root
+      password: pwd
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m %X%n%wEx"
 
 server:
   port: 8080

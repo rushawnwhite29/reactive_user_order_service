@@ -24,7 +24,7 @@ public class ProductInfoServiceClient {
     @Autowired
     public ProductInfoServiceClient(WebClient productServiceWebClient, IntegrationProperties integrationProperties) {
         this.productServiceWebClient = productServiceWebClient;
-        this.basePath = integrationProperties.getOrderSearchService().getBasePath();
+        this.basePath = integrationProperties.getProductInfoService().getBasePath();
     }
 
     public Flux<ProductInfoServiceModel.Product> getProductNamesInfoByProductCode(String productCode) {
@@ -33,10 +33,7 @@ public class ProductInfoServiceClient {
                         .queryParam(PRODUCT_CODE_PARAM, productCode)
                         .build())
                 .retrieve()
-                .bodyToFlux(ProductInfoServiceModel.Product.class)
-                .doOnComplete(() -> log.info("Fetched product names info by product code: {}", productCode))
-                .doOnError(e -> log.error("Error fetching product: {}", productCode, e))
-                .onErrorReturn(new ProductInfoServiceModel.Product());
+                .bodyToFlux(ProductInfoServiceModel.Product.class);
     }
 
 }

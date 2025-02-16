@@ -31,10 +31,7 @@ public class OrderSearchServiceClient {
                         .queryParam(PHONE_NUMBER_PARAM, phoneNumber)
                         .build())
                 .retrieve()
-                .bodyToFlux(OrderSearchServiceModel.Order.class)
-                .doOnComplete(() -> log.info("Fetched orders by phone number: {}", phoneNumber))
-                .doOnError(e -> log.error("Error fetching orders by phone number: {}", phoneNumber, e))
-                .onErrorReturn(new OrderSearchServiceModel.Order());
+                .bodyToFlux(OrderSearchServiceModel.Order.class);
     }
 
 }
