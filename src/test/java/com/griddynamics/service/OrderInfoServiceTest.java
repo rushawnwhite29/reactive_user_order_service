@@ -16,6 +16,10 @@ import com.griddynamics.domain.model.User;
 import com.griddynamics.integration.model.OrderSearchServiceModel;
 import com.griddynamics.integration.model.ProductInfoServiceModel;
 
+/**
+ * Unit tests for the OrderInfoService.
+ * This class tests the OrderInfoService's methods and their interactions with other services.
+ */
 @ExtendWith(MockitoExtension.class)
 public class OrderInfoServiceTest {
 
@@ -55,6 +59,10 @@ public class OrderInfoServiceTest {
             .productName(PRODUCT_NAME)
             .build();
 
+    /**
+     * Tests the successful retrieval of orders by user ID.
+     * Mocks the user info, order, and product services to return predefined data.
+     */
     @Test
     public void testGetOrdersByUserId_Success() {
         when(userInfoService.findById(USER_ID)).thenReturn(Mono.just(USER));
@@ -72,6 +80,10 @@ public class OrderInfoServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where the user is not found.
+     * Mocks the user info service to return an empty Mono.
+     */
     @Test
     public void testGetOrdersByUserId_UserNotFound() {
         when(userInfoService.findById(USER_ID)).thenReturn(Mono.empty());
@@ -83,6 +95,10 @@ public class OrderInfoServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where no orders are found for the user.
+     * Mocks the order service to return an empty Flux.
+     */
     @Test
     public void testGetOrdersByUserId_NoOrders() {
         when(userInfoService.findById(USER_ID)).thenReturn(Mono.just(USER));
@@ -95,6 +111,10 @@ public class OrderInfoServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where no products are found for the orders.
+     * Mocks the product service to return a product without a name.
+     */
     @Test
     public void testGetOrdersByUserId_ProductNotFound() {
         when(userInfoService.findById(USER_ID)).thenReturn(Mono.just(USER));

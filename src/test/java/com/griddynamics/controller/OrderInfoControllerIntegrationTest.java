@@ -8,13 +8,13 @@ import com.griddynamics.repository.UserInfoRepository;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -24,12 +24,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+/**
+ * Integration tests for the OrderInfoController.
+ * This class tests the integration of the OrderInfoController with other services and components.
+ */
 @Import(TestConfig.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 public class OrderInfoControllerIntegrationTest {
 
-    @Mock
+    @MockitoBean
+    @SuppressWarnings("unused")
     private UserInfoRepository userInfoRepository;
 
     @Autowired
@@ -73,6 +78,7 @@ public class OrderInfoControllerIntegrationTest {
             .orderNumber(ORDER_NUMBER)
             .userName(USER_NAME)
             .phoneNumber(PHONE)
+            .productId(PRODUCT_ID)
             .productCode(PRODUCT_CODE)
             .productName(PRODUCT_NAME)
             .build();
@@ -85,12 +91,19 @@ public class OrderInfoControllerIntegrationTest {
     private static final String PRODUCTS_PATH = "/productInfoService/product/names";
     private static final String PRODUCT_CODE_PARAM = "productCode";
 
+    /**
+     * Sets up the WireMock servers before each test.
+     */
     @BeforeEach
     public void setUp() {
         orderServiceWireMockServer.resetAll();
         productServiceWireMockServer.resetAll();
     }
 
+    /**
+     * Tests the successful retrieval of orders by user ID.
+     * Mocks the responses from the user info, order, and product services.
+     */
     @Test
     public void testGetOrdersByUserId_Success() {
         mockUserInfoRepository();
@@ -112,23 +125,30 @@ public class OrderInfoControllerIntegrationTest {
                 .expectStatus().isOk()
                 .expectBodyList(ApiModel.OrderInfo.class)
                 .hasSize(1)
-                .value(orderInfos -> {
-                    assertThat(orderInfos).contains(ORDER_INFO);
-                });
+                .value(orderInfos -> assertThat(orderInfos).contains(ORDER_INFO));
     }
 
+    /**
+     * Tests the scenario where the user is not found.
+     * Mocks the user info repository to return an empty Mono.
+     */
     @Test
     public void testGetOrdersByUserId_UserNotFound() {
         when(userInfoRepository.findById(USER_ID)).thenReturn(Mono.empty());
 
         webTestClient.get()
-                .uri(ORDER_INFO_PATH, "nonexistentUser")
+                .uri(ORDER_INFO_PATH, USER_ID)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBodyList(ApiModel.OrderInfo.class)
                 .hasSize(0);
     }
 
+    /**
+     * Tests the scenario where no orders are found for the user.
+     * Mocks the order service to return an empty response.
+     */
     @Test
     public void testGetOrdersByUserId_NoOrdersFound() {
         mockUserInfoRepository();
@@ -152,6 +172,10 @@ public class OrderInfoControllerIntegrationTest {
                 .hasSize(0);
     }
 
+    /**
+     * Tests the scenario where no products are found for the orders.
+     * Mocks the product service to return an empty response.
+     */
     @Test
     public void testGetOrdersByUserId_NoProductsFound() {
         mockUserInfoRepository();
@@ -171,8 +195,7 @@ public class OrderInfoControllerIntegrationTest {
                 .orderNumber(ORDER_NUMBER)
                 .userName(USER_NAME)
                 .phoneNumber(PHONE)
-                .productCode(null)
-                .productName(null)
+                .productCode(PRODUCT_CODE)
                 .build();
 
         webTestClient.get()
@@ -181,11 +204,12 @@ public class OrderInfoControllerIntegrationTest {
                 .expectStatus().isOk()
                 .expectBodyList(ApiModel.OrderInfo.class)
                 .hasSize(1)
-                .value(orderInfos -> {
-                    assertThat(orderInfos).contains(orderInfoWithoutProduct);
-                });
+                .value(orderInfos -> assertThat(orderInfos).contains(orderInfoWithoutProduct));
     }
 
+    /**
+     * Mocks the user info repository to return a predefined user.
+     */
     private void mockUserInfoRepository() {
         User user = User.builder()
                 .id(USER_ID)

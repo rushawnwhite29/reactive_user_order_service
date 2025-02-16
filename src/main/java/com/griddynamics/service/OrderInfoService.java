@@ -7,8 +7,11 @@ import reactor.core.publisher.Flux;
 import org.springframework.stereotype.Service;
 
 import com.griddynamics.controller.model.ApiModel;
-import com.griddynamics.integration.model.ProductInfoServiceModel;
 
+/**
+ * Service class for retrieving order information.
+ * This service provides methods to fetch orders by user ID, including user and product details.
+ */
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -18,6 +21,13 @@ public class OrderInfoService {
     private final OrderService orderService;
     private final ProductService productService;
 
+    /**
+     * Retrieves orders by user ID.
+     * This method fetches user information, orders by phone number, and product details to construct order information.
+     *
+     * @param userId the user ID to search for orders
+     * @return a Flux of ApiModel.OrderInfo objects containing the order details
+     */
     public Flux<ApiModel.OrderInfo> getOrdersByUserId(String userId) {
         return userInfoService.findById(userId)
                 .flux()

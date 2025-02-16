@@ -2,7 +2,6 @@ package com.griddynamics.service;
 
 import com.griddynamics.integration.ProductInfoServiceClient;
 import com.griddynamics.integration.model.ProductInfoServiceModel;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +13,10 @@ import reactor.test.StepVerifier;
 
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the ProductService.
+ * This class tests the ProductService's methods and their interactions with the ProductInfoServiceClient.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
@@ -33,6 +36,10 @@ public class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
+    /**
+     * Tests the successful retrieval of the most relevant product by product code.
+     * Mocks the ProductInfoServiceClient to return a predefined product.
+     */
     @Test
     public void testGetMostRelevantProductByScore_Success() {
         when(productInfoServiceClient.getProductNamesInfoByProductCode(PRODUCT_CODE)).thenReturn(Flux.just(PRODUCT));
@@ -46,6 +53,10 @@ public class ProductServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where no products are found for the given product code.
+     * Mocks the ProductInfoServiceClient to return an empty Flux.
+     */
     @Test
     public void testGetMostRelevantProductByScore_Empty() {
         when(productInfoServiceClient.getProductNamesInfoByProductCode(PRODUCT_CODE)).thenReturn(Flux.empty());
@@ -59,6 +70,10 @@ public class ProductServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where the product info service returns a server error.
+     * Mocks the ProductInfoServiceClient to return an error.
+     */
     @Test
     public void testGetMostRelevantProductByScore_Error() {
         when(productInfoServiceClient.getProductNamesInfoByProductCode(PRODUCT_CODE))

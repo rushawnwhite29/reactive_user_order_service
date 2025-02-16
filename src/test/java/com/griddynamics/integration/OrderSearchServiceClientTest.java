@@ -23,6 +23,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the OrderSearchServiceClient.
+ * This class tests the OrderSearchServiceClient's methods and their interactions with the external order search service.
+ */
+@SuppressWarnings("ALL")
 @ExtendWith(WireMockExtension.class)
 public class OrderSearchServiceClientTest {
 
@@ -52,6 +57,9 @@ public class OrderSearchServiceClientTest {
     private WireMockServer wireMockServer;
     private OrderSearchServiceClient orderSearchServiceClient;
 
+    /**
+     * Sets up the WireMock server and the OrderSearchServiceClient before each test.
+     */
     @BeforeEach
     public void setUp() {
         wireMockServer = new WireMockServer();
@@ -59,7 +67,7 @@ public class OrderSearchServiceClientTest {
         configureFor(HOST, wireMockServer.port());
 
         WebClient webClient = WebClient.builder()
-                .baseUrl("http://" + HOST + ":" + wireMockServer.port())
+                .baseUrl("http://%s:%s".formatted(HOST, wireMockServer.port()))
                 .build();
 
         IntegrationProperties integrationProperties = mock(IntegrationProperties.class);
@@ -70,6 +78,9 @@ public class OrderSearchServiceClientTest {
         orderSearchServiceClient = new OrderSearchServiceClient(webClient, integrationProperties);
     }
 
+    /**
+     * Stops the WireMock server after each test.
+     */
     @AfterEach
     void teardown() {
         if (wireMockServer != null) {
@@ -77,6 +88,10 @@ public class OrderSearchServiceClientTest {
         }
     }
 
+    /**
+     * Tests the successful retrieval of orders by phone number.
+     * Mocks the order search service to return a predefined order.
+     */
     @Test
     public void testGetOrdersByPhoneNumber_Success() {
         wireMockServer.stubFor(get(urlPathEqualTo(ORDER_PATH))
@@ -92,6 +107,10 @@ public class OrderSearchServiceClientTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where no orders are found for the given phone number.
+     * Mocks the order search service to return a 404 status.
+     */
     @Test
     public void testGetOrdersByPhoneNumber_NotFound() {
         wireMockServer.stubFor(get(urlPathEqualTo(ORDER_PATH))
@@ -106,6 +125,10 @@ public class OrderSearchServiceClientTest {
                 .verify();
     }
 
+    /**
+     * Tests the scenario where the order search service returns a server error.
+     * Mocks the order search service to return a 500 status.
+     */
     @Test
     public void testGetOrdersByPhoneNumber_ServerError() {
         wireMockServer.stubFor(get(urlPathEqualTo(ORDER_PATH))

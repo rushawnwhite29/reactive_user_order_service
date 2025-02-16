@@ -12,6 +12,10 @@ import reactor.test.StepVerifier;
 
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the UserInfoService.
+ * This class tests the UserInfoService's methods and their interactions with the UserInfoRepository.
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserInfoServiceTest {
 
@@ -31,6 +35,10 @@ public class UserInfoServiceTest {
     @InjectMocks
     private UserInfoService userInfoService;
 
+    /**
+     * Tests the successful retrieval of user information by user ID.
+     * Mocks the UserInfoRepository to return a predefined user.
+     */
     @Test
     public void testFindById_Success() {
         when(userInfoRepository.findById(USER_ID)).thenReturn(Mono.just(USER));
@@ -44,6 +52,10 @@ public class UserInfoServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where the user is not found.
+     * Mocks the UserInfoRepository to return an empty Mono.
+     */
     @Test
     public void testFindById_UserNotFound() {
         when(userInfoRepository.findById(USER_ID)).thenReturn(Mono.empty());
@@ -55,6 +67,10 @@ public class UserInfoServiceTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where an error occurs while retrieving user information.
+     * Mocks the UserInfoRepository to return an error.
+     */
     @Test
     public void testFindById_Error() {
         when(userInfoRepository.findById(USER_ID))

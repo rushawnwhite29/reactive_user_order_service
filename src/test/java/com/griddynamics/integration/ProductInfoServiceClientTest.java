@@ -18,6 +18,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the ProductInfoServiceClient.
+ * This class tests the ProductInfoServiceClient's methods and their interactions with the external product info service.
+ */
+@SuppressWarnings("ALL")
 @ExtendWith(WireMockExtension.class)
 public class ProductInfoServiceClientTest {
 
@@ -50,6 +55,9 @@ public class ProductInfoServiceClientTest {
     private WireMockServer wireMockServer;
     private ProductInfoServiceClient productInfoServiceClient;
 
+    /**
+     * Sets up the WireMock server and the ProductInfoServiceClient before each test.
+     */
     @BeforeEach
     public void setUp() {
         wireMockServer = new WireMockServer();
@@ -57,7 +65,7 @@ public class ProductInfoServiceClientTest {
         configureFor(HOST, wireMockServer.port());
 
         WebClient webClient = WebClient.builder()
-                .baseUrl("http://" + HOST + ":" + wireMockServer.port())
+                .baseUrl("http://%s:%s".formatted(HOST, wireMockServer.port()))
                 .build();
 
         IntegrationProperties integrationProperties = mock(IntegrationProperties.class);
@@ -68,6 +76,9 @@ public class ProductInfoServiceClientTest {
         productInfoServiceClient = new ProductInfoServiceClient(webClient, integrationProperties);
     }
 
+    /**
+     * Stops the WireMock server after each test.
+     */
     @AfterEach
     void teardown() {
         if (wireMockServer != null) {
@@ -75,6 +86,10 @@ public class ProductInfoServiceClientTest {
         }
     }
 
+    /**
+     * Tests the successful retrieval of product names info by product code.
+     * Mocks the product info service to return a predefined product.
+     */
     @Test
     public void testGetProductNamesInfoByProductCode_Success() {
         wireMockServer.stubFor(get(urlPathEqualTo(PRODUCTS_PATH))
@@ -90,6 +105,10 @@ public class ProductInfoServiceClientTest {
                 .verifyComplete();
     }
 
+    /**
+     * Tests the scenario where no products are found for the given product code.
+     * Mocks the product info service to return a 404 status.
+     */
     @Test
     public void testGetProductNamesInfoByProductCode_NotFound() {
         wireMockServer.stubFor(get(urlPathEqualTo(PRODUCTS_PATH))
@@ -104,6 +123,10 @@ public class ProductInfoServiceClientTest {
                 .verify();
     }
 
+    /**
+     * Tests the scenario where the product info service returns a server error.
+     * Mocks the product info service to return a 500 status.
+     */
     @Test
     public void testGetProductNamesInfoByProductCode_ServerError() {
         wireMockServer.stubFor(get(urlPathEqualTo(PRODUCTS_PATH))
