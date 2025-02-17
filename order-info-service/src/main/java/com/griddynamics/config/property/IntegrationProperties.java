@@ -3,6 +3,7 @@ package com.griddynamics.config.property;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * This class holds the configuration for the Product Info Service and Order Search Service.
  */
 @Data
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "app.integration")
 public class IntegrationProperties {
 
