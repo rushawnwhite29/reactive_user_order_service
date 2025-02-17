@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mongoimport:
+    image: mongo
+    volumes:
+      - ./Reactive_Paradigm_FOR_STUDENTS/mongo/data/users.json:/src/data/users.json
+    command: mongoimport --host mongo --username root --password pwd --db admin --collection users --file /src/data/users.json --jsonArray
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pwd
+    depends_on:
+      - mongoimport
+
+  order-search-service:
+    build:
+      context: ./Reactive_Paradigm_FOR_STUDENTS/order-search-service
+      dockerfile: Dockerfile
+    image: order-search-service
+    ports:
+      - "8081:8080"
+
+  product-info-service:
+    build:
+      context: ./Reactive_Paradigm_FOR_STUDENTS/product-info-service
+      dockerfile: Dockerfile
+    image: product-info-service
+    ports:
+      - "8082:8080"
+
+  order-info-service:
+    build:
+      context: ./order-info-service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_DB_NAME=admin
+      - MONGO_ROOT_USERNAME=root
+      - MONGO_ROOT_PASSWORD=pwd
+      - SPRING_DATA_MONGODB_URI=mongodb://root:pwd@mongo:27017/admin
+      - ORDER_SEARCH_SERVICE_URL=http://host.docker.internal:8081
+      - PRODUCT_INFO_SERVICE_URL=http://host.docker.internal:8082

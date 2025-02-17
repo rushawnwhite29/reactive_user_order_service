@@ -1,11 +1,7 @@
 spring:
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: admin
-      username: root
-      password: pwd
+      uri: ${SPRING_DATA_MONGODB_URI}
 
 server:
   port: 8080
@@ -17,8 +13,8 @@ logging:
 app:
   integration:
     product-info-service:
-      url: http://localhost:8082
+      url: ${PRODUCT_INFO_SERVICE_URL}
       base-path: /productInfoService
     order-search-service:
-      url: http://localhost:8081
+      url: ${ORDER_SEARCH_SERVICE_URL}
       base-path: /orderSearchService
