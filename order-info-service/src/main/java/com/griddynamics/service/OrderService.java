@@ -29,8 +29,8 @@ public class OrderService {
      */
     public Flux<OrderSearchServiceModel.Order> getOrderByPhoneNumber(String phone) {
         return orderSearchServiceClient.getOrdersByPhoneNumber(phone)
-                .doOnComplete(() -> log.info("Fetched orders by phone number [{}]", phone))
-                .doOnError(e -> log.error("Error fetching orders by phone number [{}]. {}", phone, e))
+                .doOnComplete(() -> log.info("FOUND orders by phone number [{}]", phone))
+                .doOnError(e -> log.error("[ERROR] fetching orders by phone number [{}]. {}", phone, e))
                 .onErrorResume(e -> Flux.empty());
     }
 

@@ -29,7 +29,7 @@ public class UserInfoService {
      */
     public Mono<User> findById(String id) {
         return userInfoRepository.findById(id)
-                .doOnError(e -> log.error("Error fetching user by id [{}]. {}", id, e.getMessage()))
+                .doOnError(e -> log.error("[ERROR] fetching user by id [{}]. {}", id, e.getMessage()))
                 .onErrorResume(e -> Mono.empty());
     }
 

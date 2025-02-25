@@ -29,8 +29,8 @@ public class ProductService {
      */
     public Mono<ProductInfoServiceModel.Product> getMostRelevantProductByScore(String productCode) {
         return productInfoServiceClient.getProductNamesInfoByProductCode(productCode)
-                .doOnComplete(() -> log.info("Fetched product names [{}]", productCode))
-                .doOnError(e -> log.error("Error fetching product names [{}]. {}", productCode, e.getMessage()))
+                .doOnComplete(() -> log.info("FOUND product names [{}]", productCode))
+                .doOnError(e -> log.error("[ERROR] fetching product names [{}]. {}", productCode, e.getMessage()))
                 .onErrorReturn(
                         ProductInfoServiceModel.Product.builder()
                                 .productCode(productCode)

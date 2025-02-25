@@ -44,13 +44,12 @@ public class ProductInfoServiceClient {
      * @return a Flux of Product objects containing the product details
      */
     public Flux<ProductInfoServiceModel.Product> getProductNamesInfoByProductCode(String productCode) {
-        log.info("Fetching product information for product code: [{}]", productCode);
+        log.info("FETCHING product information for product code: [{}]", productCode);
         return productServiceWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path(basePath.concat(PRODUCTS_PATH))
                         .queryParam(PRODUCT_CODE_PARAM, productCode)
                         .build())
-                .retrieve()
-                .bodyToFlux(ProductInfoServiceModel.Product.class);
+                .exchangeToFlux(response -> response.bodyToFlux(ProductInfoServiceModel.Product.class));
     }
 
 }

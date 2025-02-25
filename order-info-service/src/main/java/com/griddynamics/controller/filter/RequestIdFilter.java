@@ -2,8 +2,8 @@ package com.griddynamics.controller.filter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.ThreadContext;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.MDC;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
@@ -43,7 +43,7 @@ public class RequestIdFilter extends CommonsRequestLoggingFilter {
         final String requestID = StringUtils.substringAfterLast(UUID.randomUUID().toString(), "-");
 
         request.setAttribute(REQUEST_ID_HEADER, requestID);
-        ThreadContext.put(REQUEST_ID_HEADER, requestID);
+        MDC.put(REQUEST_ID_HEADER, requestID);
     }
 
     /**
@@ -55,7 +55,7 @@ public class RequestIdFilter extends CommonsRequestLoggingFilter {
     @Override
     protected void afterRequest(HttpServletRequest request, @NotNull String message) {
         request.removeAttribute(REQUEST_ID_HEADER);
-        ThreadContext.remove(REQUEST_ID_HEADER);
+        MDC.remove(REQUEST_ID_HEADER);
     }
 
 }

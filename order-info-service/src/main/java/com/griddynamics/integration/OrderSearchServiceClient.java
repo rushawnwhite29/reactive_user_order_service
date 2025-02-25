@@ -42,13 +42,12 @@ public class OrderSearchServiceClient {
      * @return a Flux of Order objects containing the order details
      */
     public Flux<OrderSearchServiceModel.Order> getOrdersByPhoneNumber(String phoneNumber) {
-        log.info("Fetching orders for phone number: [{}]", phoneNumber);
+        log.info("FETCHING orders for phone number: [{}]", phoneNumber);
         return orderServiceWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path(basePath.concat(ORDERS_PATH))
                         .queryParam(PHONE_NUMBER_PARAM, phoneNumber)
                         .build())
-                .retrieve()
-                .bodyToFlux(OrderSearchServiceModel.Order.class);
+                .exchangeToFlux(response -> response.bodyToFlux(OrderSearchServiceModel.Order.class));
     }
 
 }

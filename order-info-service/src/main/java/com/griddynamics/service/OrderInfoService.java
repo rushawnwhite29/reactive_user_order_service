@@ -44,7 +44,7 @@ public class OrderInfoService {
                                 )
                         )
                 )
-                .doOnError(e -> log.error("Error fetching orders by user id [{}]. {}", userId, e.getMessage()))
+                .doOnError(e -> log.error("[ERROR] fetching orders by user id [{}]. {}", userId, e.getMessage()))
                 .onErrorResume(e -> Flux.empty());
     }
 
